@@ -1,80 +1,56 @@
 package dynamock
 
 import (
-	"fmt"
-	"reflect"
+	"net/http"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-// ToTable - method for set Table expectation
-func (e *GetItemExpectation) ToTable(table string) *GetItemExpectation {
+// Table - method for set Table expectation
+func (e *GetItemExpectation) Table(table string) *GetItemExpectation {
 	e.table = &table
 	return e
 }
 
 // WithKeys - method for set Keys expectation
-func (e *GetItemExpectation) WithKeys(keys map[string]*dynamodb.AttributeValue) *GetItemExpectation {
+func (e *GetItemExpectation) WithKeys(keys map[string]dynamodb.AttributeValue) *GetItemExpectation {
 	e.key = keys
 	return e
 }
 
-// WillReturns - method for set desired result
-func (e *GetItemExpectation) WillReturns(res dynamodb.GetItemOutput) *GetItemExpectation {
-	e.output = &res
+// WillReturn - method for set desired result
+func (e *GetItemExpectation) WillReturn(res dynamodb.GetItemResponse) *GetItemExpectation {
+	e.output = res.GetItemOutput
 	return e
 }
 
-// GetItem - this func will be invoked when test running matching expectation with actual input
-func (e *MockDynamoDB) GetItem(input *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error) {
-	if len(e.dynaMock.GetItemExpect) > 0 {
-		x := e.dynaMock.GetItemExpect[0] //get first element of expectation
-
-		if x.table != nil {
-			if *x.table != *input.TableName {
-				return nil, fmt.Errorf("Expect table %s but found table %s", *x.table, *input.TableName)
-			}
-		}
-
-		if x.key != nil {
-			if !reflect.DeepEqual(x.key, input.Key) {
-				return nil, fmt.Errorf("Expect key %+v but found key %+v", x.key, input.Key)
-			}
-		}
-
-		// delete first element of expectation
-		e.dynaMock.GetItemExpect = append(e.dynaMock.GetItemExpect[:0], e.dynaMock.GetItemExpect[1:]...)
-
-		return x.output, nil
+// GetItemRequest - this func will be invoked when test running matching expectation with actual input
+func (e *MockDynamoDB) GetItemRequest(input *dynamodb.GetItemInput) dynamodb.GetItemRequest {
+	req := dynamodb.GetItemRequest{
+		Request: &aws.Request{
+			HTTPRequest: &http.Request{},
+		},
 	}
 
-	return nil, fmt.Errorf("Get Item Expectation Not Found")
-}
+	if len(e.dynaMock.GetItemExpect) == 0 {
+		req.Error = ErrNoExpectation
 
-// GetItemWithContext - this func will be invoked when test running matching expectation with actual input
-func (e *MockDynamoDB) GetItemWithContext(ctx aws.Context, input *dynamodb.GetItemInput, opt ...request.Option) (*dynamodb.GetItemOutput, error) {
-	if len(e.dynaMock.GetItemExpect) > 0 {
-		x := e.dynaMock.GetItemExpect[0] //get first element of expectation
-
-		if x.table != nil {
-			if *x.table != *input.TableName {
-				return nil, fmt.Errorf("Expect table %s but found table %s", *x.table, *input.TableName)
-			}
-		}
-
-		if x.key != nil {
-			if !reflect.DeepEqual(x.key, input.Key) {
-				return nil, fmt.Errorf("Expect key %+v but found key %+v", x.key, input.Key)
-			}
-		}
-
-		// delete first element of expectation
-		e.dynaMock.GetItemExpect = append(e.dynaMock.GetItemExpect[:0], e.dynaMock.GetItemExpect[1:]...)
-
-		return x.output, nil
+		return req
 	}
 
-	return nil, fmt.Errorf("Get Item With Context Expectation Not Found")
+	x := e.dynaMock.GetItemExpect[0]
+
+	validateInput(input, req.Request)
+	validateTable(input.TableName, x.table, req.Request)
+	validateKey(input.Key, x.key, req.Request)
+	if req.Error != nil {
+		return req
+	}
+
+	e.dynaMock.GetItemExpect = append(e.dynaMock.GetItemExpect[:0], e.dynaMock.GetItemExpect[1:]...)
+
+	req.Data = x.output
+
+	return req
 }

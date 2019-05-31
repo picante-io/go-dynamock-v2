@@ -1,98 +1,72 @@
 package dynamock
 
 import (
-	"fmt"
+	"net/http"
 	"reflect"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-// ToTable - method for set Table expectation
-func (e *UpdateItemExpectation) ToTable(table string) *UpdateItemExpectation {
+// Table - method for set Table expectation
+func (e *UpdateItemExpectation) Table(table string) *UpdateItemExpectation {
 	e.table = &table
 	return e
 }
 
 // WithKeys - method for set Keys expectation
-func (e *UpdateItemExpectation) WithKeys(keys map[string]*dynamodb.AttributeValue) *UpdateItemExpectation {
+func (e *UpdateItemExpectation) WithKeys(keys map[string]dynamodb.AttributeValue) *UpdateItemExpectation {
 	e.key = keys
 	return e
 }
 
 // Updates - method for set Updates expectation
-func (e *UpdateItemExpectation) Updates(attrs map[string]*dynamodb.AttributeValueUpdate) *UpdateItemExpectation {
+func (e *UpdateItemExpectation) Updates(attrs map[string]dynamodb.AttributeValueUpdate) *UpdateItemExpectation {
 	e.attributeUpdates = attrs
 	return e
 }
 
-// WillReturns - method for set desired result
-func (e *UpdateItemExpectation) WillReturns(res dynamodb.UpdateItemOutput) *UpdateItemExpectation {
-	e.output = &res
+// WillReturn - method for set desired result
+func (e *UpdateItemExpectation) WillReturn(res dynamodb.UpdateItemResponse) *UpdateItemExpectation {
+	e.output = res.UpdateItemOutput
 	return e
 }
 
-// UpdateItem - this func will be invoked when test running matching expectation with actual input
-func (e *MockDynamoDB) UpdateItem(input *dynamodb.UpdateItemInput) (*dynamodb.UpdateItemOutput, error) {
-	if len(e.dynaMock.UpdateItemExpect) > 0 {
-		x := e.dynaMock.UpdateItemExpect[0] //get first element of expectation
-
-		if x.table != nil {
-			if *x.table != *input.TableName {
-				return nil, fmt.Errorf("Expect table %s but found table %s", *x.table, *input.TableName)
-			}
-		}
-
-		if x.key != nil {
-			if !reflect.DeepEqual(x.key, input.Key) {
-				return nil, fmt.Errorf("Expect key %+v but found key %+v", x.key, input.Key)
-			}
-		}
-
-		if x.attributeUpdates != nil {
-			if !reflect.DeepEqual(x.attributeUpdates, input.AttributeUpdates) {
-				return nil, fmt.Errorf("Expect key %+v but found key %+v", x.attributeUpdates, input.AttributeUpdates)
-			}
-		}
-
-		// delete first element of expectation
-		e.dynaMock.UpdateItemExpect = append(e.dynaMock.UpdateItemExpect[:0], e.dynaMock.UpdateItemExpect[1:]...)
-
-		return x.output, nil
+// UpdateItemRequest - this func will be invoked when test running matching expectation with actual input
+func (e *MockDynamoDB) UpdateItemRequest(input *dynamodb.UpdateItemInput) dynamodb.UpdateItemRequest {
+	req := dynamodb.UpdateItemRequest{
+		Request: &aws.Request{
+			HTTPRequest: &http.Request{},
+		},
 	}
 
-	return nil, fmt.Errorf("Update Item Expectation Not Found")
-}
+	if len(e.dynaMock.UpdateItemExpect) == 0 {
+		req.Error = ErrNoExpectation
 
-// UpdateItemWithContext - this func will be invoked when test running matching expectation with actual input
-func (e *MockDynamoDB) UpdateItemWithContext(ctx aws.Context, input *dynamodb.UpdateItemInput, opt ...request.Option) (*dynamodb.UpdateItemOutput, error) {
-	if len(e.dynaMock.UpdateItemExpect) > 0 {
-		x := e.dynaMock.UpdateItemExpect[0] //get first element of expectation
-
-		if x.table != nil {
-			if *x.table != *input.TableName {
-				return nil, fmt.Errorf("Expect table %s but found table %s", *x.table, *input.TableName)
-			}
-		}
-
-		if x.key != nil {
-			if !reflect.DeepEqual(x.key, input.Key) {
-				return nil, fmt.Errorf("Expect key %+v but found key %+v", x.key, input.Key)
-			}
-		}
-
-		if x.attributeUpdates != nil {
-			if !reflect.DeepEqual(x.attributeUpdates, input.AttributeUpdates) {
-				return nil, fmt.Errorf("Expect key %+v but found key %+v", x.attributeUpdates, input.AttributeUpdates)
-			}
-		}
-
-		// delete first element of expectation
-		e.dynaMock.UpdateItemExpect = append(e.dynaMock.UpdateItemExpect[:0], e.dynaMock.UpdateItemExpect[1:]...)
-
-		return x.output, nil
+		return req
 	}
 
-	return nil, fmt.Errorf("Update Item With Context Expectation Not Found")
+	x := e.dynaMock.UpdateItemExpect[0]
+
+	if x.table != nil {
+		if *x.table != *input.TableName {
+			req.Error = ErrTableExpectationMismatch
+
+			return req
+		}
+	}
+
+	if x.attributeUpdates != nil {
+		if !reflect.DeepEqual(x.attributeUpdates, input.AttributeUpdates) {
+			req.Error = ErrKeyExpectationMismatch
+
+			return req
+		}
+	}
+
+	e.dynaMock.UpdateItemExpect = append(e.dynaMock.UpdateItemExpect[:0], e.dynaMock.UpdateItemExpect[1:]...)
+
+	req.Data = x.output
+
+	return req
 }
