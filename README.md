@@ -1,7 +1,9 @@
 # go-dynamock-v2
 
-[![GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2?status.png)](https://godoc.org/github.com/groovili/go-dynamock-v2) [![Go Report Card](https://goreportcard.com/badge/github.com/groovili/go-dynamock-v2)](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2) [![Build Status](https://api.travis-ci.org/groovili/go-dynamock-v2.svg?branch=master)](https://travis-ci.org/groovili/go-dynamock-v2)
-
+[![GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2?status.png)](https://godoc.org/github.com/groovili/go-dynamock-v2) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/groovili/go-dynamock-v2)](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2) 
+[![Build Status](https://api.travis-ci.org/groovili/go-dynamock-v2.svg?branch=master)](https://travis-ci.org/groovili/go-dynamock-v2)
+[![Codecov](https://codecov.io/gh/groovili/go-dynamock-v2/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/gh/groovili/go-dynamock-v2)
 
 Amazon DynamoDB mock for unit testing, fully compatible with [SDK](https://github.com/aws/aws-sdk-go-v2).
 
