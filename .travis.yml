@@ -5,6 +5,7 @@ go:
     - master
 
 install:
+    export GO111MODULE=on
     go build ./examples/
 
 script:
