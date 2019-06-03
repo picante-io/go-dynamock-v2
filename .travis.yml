@@ -1,12 +1,13 @@
 language: go
 go:
     - 1.11.x
-    - 1.1x.x
     - master
-
-install:
-    export GO111MODULE=on
-    go build ./examples/
-
+os:
+    - linux
+    - osx
+dist: trusty
+sudo: false
+install: true
 script:
-    go test -v -parallel 2 ./examples/
+    - env GO111MODULE=on go build ./examples
+    - env GO111MODULE=on go test -v ./examples
