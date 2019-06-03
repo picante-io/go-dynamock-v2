@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2?status.png)](https://godoc.org/github.com/groovili/go-dynamock-v2) [![Go Report Card](https://goreportcard.com/badge/github.com/groovili/go-dynamock-v2)](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2) [![Build Status](https://travis-ci.com/gusaul/go-dynamock.svg?branch=master)](https://travis-ci.com/gusaul/go-dynamock)
+[![GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2?status.png)](https://godoc.org/github.com/groovili/go-dynamock-v2) [![Go Report Card](https://goreportcard.com/badge/github.com/groovili/go-dynamock-v2)](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2) [![Build Status](https://travis-ci.com/groovili/go-dynamock-v2.svg?branch=master)](https://travis-ci.com/groovili/go-dynamock-v2)
 
 # go-dynamock-v2
 Dynamo DB Mock based on AWS SDK for Go V2
@@ -83,7 +83,7 @@ import (
 	"strconv"
 	"testing"
 
-	dynamock "github.com/gusaul/go-dynamock"
+	dynamock "github.com/groovili/go-dynamock-v2"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"

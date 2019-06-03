@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	dynamock "github.com/groovili/go-dynamock"
+	dynamock "github.com/groovili/go-dynamock-v2"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
