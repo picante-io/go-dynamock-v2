@@ -1,9 +1,10 @@
-[![GoDoc](https://godoc.org/github.com/gusaul/go-dynamock?status.png)](https://godoc.org/github.com/gusaul/go-dynamock) [![Go Report Card](https://goreportcard.com/badge/github.com/gusaul/go-dynamock)](https://goreportcard.com/report/github.com/gusaul/go-dynamock) [![Build Status](https://travis-ci.com/gusaul/go-dynamock.svg?branch=master)](https://travis-ci.com/gusaul/go-dynamock)
-# go-dynamock
-Amazon Dynamo DB Mock Driver for Golang to Test Database Interactions
+[![GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2?status.png)](https://godoc.org/github.com/groovili/go-dynamock-v2) [![Go Report Card](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2)](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2) [![Build Status](https://travis-ci.com/gusaul/go-dynamock.svg?branch=master)](https://travis-ci.com/gusaul/go-dynamock)
+
+# go-dynamock-v2
+Dynamo DB Mock based on AWS SDK for Go V2
 
 ## Examples Usage
-Visit [godoc](https://godoc.org/github.com/gusaul/go-dynamock) for general examples and public api reference.
+Visit [godoc](https://godoc.org/github.com/groovili/go-dynamock-v2) for general examples and public API reference.
 
 ### DynamoDB configuration
 First of all, change the dynamodb configuration to use the ***dynamodb interface***. see code below:
@@ -127,25 +128,7 @@ func TestGetItem(t *testing.T) {
 	}
 }
 ```
-if you just wanna expect the table
-``` go
-mock.ExpectGetItem().Table("employee").WillReturn(result)
-```
-or maybe you didn't care with any arguments, you just need to determine the result
-``` go
-mock.ExpectGetItem().WillReturn(result)
-```
-and you can do multiple expectations at once, then the expectation will be executed sequentially.
-``` go
-mock.ExpectGetItem().WillReturn(resultOne)
-mock.ExpectUpdateItem().WillReturn(resultTwo)
-mock.ExpectGetItem().WillReturn(resultThree)
 
-/* Result
-the first call of GetItem will return resultOne
-the second call of GetItem will return resultThree
-and the only call of UpdateItem will return resultTwo */
-```
 ### Currently Supported Functions
 ``` go
 GetItemRequest(*dynamodb.GetItemInput) dynamodb.GetItemRequest
@@ -160,12 +143,12 @@ CreateTableRequest(*dynamodb.CreateTableInput) dynamodb.CreateTableRequest
 DescribeTableRequest(*dynamodb.DescribeTableInput) dynamodb.DescribeTableRequest
 WaitUntilTableExists(context.Context, *dynamodb.DescribeTableInput, ...aws.WaiterOption) error
 ```
+
 ## Contributions
 
 Feel free to open a pull request. Note, if you wish to contribute an extension to public (exported methods or types) -
-please open an issue before, to discuss whether these changes can be accepted. All backward incompatible changes are
-and will be treated cautiously.
+please open an issue before, to discuss whether these changes can be accepted.
 
 ## License
 
-The [MIT License](https://github.com/gusaul/go-dynamock/blob/master/LICENSE)
+The [MIT License](https://github.com/groovili/go-dynamock-v2/blob/master/LICENSE)
