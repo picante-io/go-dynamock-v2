@@ -1,36 +1,42 @@
+# go-dynamock-v2
+
 [![GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2?status.png)](https://godoc.org/github.com/groovili/go-dynamock-v2) [![Go Report Card](https://goreportcard.com/badge/github.com/groovili/go-dynamock-v2)](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2) [![Build Status](https://api.travis-ci.org/groovili/go-dynamock-v2.svg?branch=master)](https://travis-ci.org/groovili/go-dynamock-v2)
 
-# go-dynamock-v2
-Dynamo DB Mock based on AWS SDK for Go V2
 
-## Examples Usage
-Visit [godoc](https://godoc.org/github.com/groovili/go-dynamock-v2) for general examples and public API reference.
+Amazon DynamoDB mock for unit testing, fully compatible with [SDK](https://github.com/aws/aws-sdk-go-v2).
 
-### DynamoDB configuration
-First of all, change the dynamodb configuration to use the ***dynamodb interface***. see code below:
+Visit [GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2) for public API documentation.
+
+Thanks to [gusaul](https://github.com/gusaul)  for the first version of package [go-dynamock](https://github.com/gusaul/go-dynamock).
+
+## Requirements
+
+- Go >= 1.11.x
+- [AWS SDK GO V2](https://github.com/aws/aws-sdk-go-v2) >= v0.9.0
+
+
+## Usage
+To use mock you should depend in your code on [ClientAPI interface](https://github.com/aws/aws-sdk-go-v2/tree/master/service/dynamodb/dynamodbiface), instead of dependency on specific DynamoDB instance.
+
 ``` go
 package main
 
 import (
-    "github.com/aws/aws-sdk-go-v2/aws"
-    "github.com/aws/aws-sdk-go-v2/service/dynamodb"
     "github.com/aws/aws-sdk-go-v2/service/dynamodb/dynamodbiface"
 )
 
-type MyDynamo struct {
-    DB dynamodbiface.DynamoDBAPI
+type Service struct {
+    DynamoDB dynamodbiface.ClientAPI
 }
 
-var Dyna *MyDynamo
-
-func ConfigureDynamoDB() {
-    Dyna = new(MyDynamo)
-    Dyna.DB, Mock = dynamock.New()
+func NewService (dynamo dynamodbiface.ClientAPI) *Service {
+    return &Service{
+        DynamoDB: dynamo,
+    }
 }
 ```
-the purpose of code above is to make your dynamoDB object can be mocked by ***dynamock*** through the dynamodbiface.
 
-### Something you may wanna test
+#### Function you want to test
 ``` go
 package main
 
@@ -75,7 +81,7 @@ func GetNameByID(ID int) (*string, error) {
 }
 ```
 
-### Test with DynaMock
+#### Test
 ``` go
 package examples
 
@@ -129,7 +135,7 @@ func TestGetItem(t *testing.T) {
 }
 ```
 
-### Currently Supported Functions
+## Currently Supported Functions
 ``` go
 GetItemRequest(*dynamodb.GetItemInput) dynamodb.GetItemRequest
 PutItemRequest(*dynamodb.PutItemInput) dynamodb.PutItemRequest
@@ -146,8 +152,7 @@ WaitUntilTableExists(context.Context, *dynamodb.DescribeTableInput, ...aws.Waite
 
 ## Contributions
 
-Feel free to open a pull request. Note, if you wish to contribute an extension to public (exported methods or types) -
-please open an issue before, to discuss whether these changes can be accepted.
+Feel free to open a pull request.
 
 ## License
 
