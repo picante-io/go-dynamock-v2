@@ -1,4 +1,4 @@
-module go-dynamock-v2/examples
+module github.com/groovili/go-dynamock-v2/examples
 
 go 1.12
 
