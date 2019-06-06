@@ -1,4 +1,4 @@
-module go-dynamock/examples
+module go-dynamock-v2/examples
 
 go 1.12
 
