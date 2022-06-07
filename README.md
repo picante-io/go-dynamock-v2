@@ -1,26 +1,26 @@
 # go-dynamock-v2
 
-[![GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2?status.png)](https://godoc.org/github.com/groovili/go-dynamock-v2) 
-[![Go Report Card](https://goreportcard.com/badge/github.com/groovili/go-dynamock-v2)](https://goreportcard.com/report/github.com/groovili/go-dynamock-v2) 
+[![GoDoc](https://godoc.org/github.com/picante-io/go-dynamock-v2?status.png)](https://godoc.org/github.com/picante-io/go-dynamock-v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/picante-io/go-dynamock-v2)](https://goreportcard.com/report/github.com/picante-io/go-dynamock-v2)
 [![Build Status](https://api.travis-ci.org/groovili/go-dynamock-v2.svg?branch=master)](https://travis-ci.org/groovili/go-dynamock-v2)
 [![Codecov](https://codecov.io/gh/groovili/go-dynamock-v2/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/gh/groovili/go-dynamock-v2)
 
 Amazon DynamoDB mock for unit testing, fully compatible with [SDK](https://github.com/aws/aws-sdk-go-v2).
 
-Visit [GoDoc](https://godoc.org/github.com/groovili/go-dynamock-v2) for public API documentation.
+Visit [GoDoc](https://godoc.org/github.com/picante-io/go-dynamock-v2) for public API documentation.
 
-Thanks to [gusaul](https://github.com/gusaul)  for the first version of package [go-dynamock](https://github.com/gusaul/go-dynamock).
+Thanks to [gusaul](https://github.com/gusaul) for the first version of package [go-dynamock](https://github.com/gusaul/go-dynamock).
 
 ## Requirements
 
-- Go >= 1.11.x
-- [AWS SDK GO V2](https://github.com/aws/aws-sdk-go-v2) >= v0.9.0
-
+-   Go >= 1.11.x
+-   [AWS SDK GO V2](https://github.com/aws/aws-sdk-go-v2) >= v0.9.0
 
 ## Usage
+
 To use mock you should depend in your code on [ClientAPI interface](https://github.com/aws/aws-sdk-go-v2/tree/master/service/dynamodb/dynamodbiface), instead of dependency on specific DynamoDB instance.
 
-``` go
+```go
 package main
 
 import (
@@ -39,13 +39,14 @@ func NewService (dynamo dynamodbiface.ClientAPI) *Service {
 ```
 
 #### Function you want to test
-``` go
+
+```go
 package main
 
 import (
     "context"
     "strconv"
-    
+
     "github.com/aws/aws-sdk-go-v2/aws"
     "github.com/aws/aws-sdk-go-v2/service/dynamodb"
     "github.com/aws/aws-sdk-go-v2/service/dynamodb/dynamodbattribute"
@@ -84,14 +85,15 @@ func GetNameByID(ID int) (*string, error) {
 ```
 
 #### Test
-``` go
+
+```go
 package examples
 
 import (
 	"strconv"
 	"testing"
 
-	dynamock "github.com/groovili/go-dynamock-v2"
+	dynamock "github.com/picante-io/go-dynamock-v2"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -138,7 +140,8 @@ func TestGetItem(t *testing.T) {
 ```
 
 ## Currently Supported Functions
-``` go
+
+```go
 GetItemRequest(*dynamodb.GetItemInput) dynamodb.GetItemRequest
 PutItemRequest(*dynamodb.PutItemInput) dynamodb.PutItemRequest
 UpdateItemRequest(*dynamodb.UpdateItemInput) dynamodb.UpdateItemRequest
@@ -158,4 +161,4 @@ Feel free to open a pull request.
 
 ## License
 
-The [MIT License](https://github.com/groovili/go-dynamock-v2/blob/master/LICENSE)
+The [MIT License](https://github.com/picante-io/go-dynamock-v2/blob/master/LICENSE)
